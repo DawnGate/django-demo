@@ -22,7 +22,6 @@ class UserAccountManager(BaseUserManager):
         user = self.model(xid=xid, password=password, **other_fields)
         user.set_unusable_password()
         user.save()
-        print(user)
         return user
 
 class User(AbstractBaseUser, PermissionsMixin): 
@@ -55,7 +54,7 @@ class TransactionStatus(models.TextChoices):
 class Withdrawn(models.Model):
     id = models.UUIDField(primary_key = True, default = uuid.uuid4)
     ref_id = models.CharField(unique = True, max_length =  50)
-    widthdrawn_by = models.ForeignKey(User, on_delete = models.CASCADE)
+    withdrawn_by = models.ForeignKey(User, on_delete = models.CASCADE)
     amount = models.PositiveIntegerField(default=0)
     withdrawn_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=4, choices = TransactionStatus.choices, default = "FAIL")
