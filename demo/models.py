@@ -1,9 +1,41 @@
 from email.policy import default
 from django.db import models
 import uuid
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
-class User(models.Model): 
-    id = models.CharField(primary_key = True, max_length = 50)
+class UserAccountManager(BaseUserManager):
+    def create_superuser(self, xid, password, **other_fields):
+        other_fields.setdefault('is_staff', True)
+        other_fields.setdefault('is_superuser', True)
+        other_fields.setdefault('is_active', True)
+
+        if other_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must be assigned to is_superuser=True')
+        user =  self.create_user(xid, password, **other_fields)
+        user.set_password(password)
+        user.save()
+        return user
+
+    def create_user(self, xid, password, **other_fields):
+        if not xid:
+            raise ValueError('Xid is required!')
+        user = self.model(xid=xid, password=password, **other_fields)
+        user.set_unusable_password()
+        user.save()
+        print(user)
+        return user
+
+class User(AbstractBaseUser, PermissionsMixin): 
+    xid = models.CharField(unique = True, max_length = 50)
+    is_staff = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=False)
+
+    objects = UserAccountManager()
+    USERNAME_FIELD = 'xid'
+
+    def __str__(self):
+        return self.xid
+
 
 class Wallet(models.Model):
     class Status(models.TextChoices):

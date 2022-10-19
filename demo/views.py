@@ -14,7 +14,6 @@ from rest_framework.authtoken.models import Token
 from .models import User, Wallet
 from .serializers import UserSerializer, WalletSerializer
 
-import json
 
 
 class InitUser(APIView):
@@ -30,16 +29,16 @@ class InitUser(APIView):
                 }
             }, status=status.HTTP_400_BAD_REQUEST)
         # create new user
-        user_serializer =  UserSerializer(data={'id': customer_xid})
+        user_serializer =  UserSerializer(data={'xid': customer_xid})
         if not user_serializer.is_valid():
             return Response({
                 "status": "error",
                 "message": user_serializer.errors
             }, status = status.HTTP_400_BAD_REQUEST)
         new_user =user_serializer.save()
-        print(user_serializer.data)
+        print(new_user)
         # create new wallet
-        wallet_serializer = WalletSerializer( data = {"owned_by" : user_serializer.data['id']})
+        wallet_serializer = WalletSerializer( data = {"owned_by" : new_user.id})
         if not wallet_serializer.is_valid():
             return Response({
                 "status": "error",
