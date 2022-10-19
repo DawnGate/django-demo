@@ -20,5 +20,5 @@ from demo import urls as demo_urls
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
-    path('todos/', include(demo_urls))
+    path('api/', include(demo_urls))
 ]
