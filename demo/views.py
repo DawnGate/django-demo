@@ -204,7 +204,7 @@ class CreateWidthdrawn(APIView):
         if wallet.disabled_at:
            return Response({"status": "error", "message": "This wallet has disabled"}, status=status.HTTP_400_BAD_REQUEST) 
         try:
-            can_withdrawn = int(amount) < wallet.balance
+            can_withdrawn = int(amount) <= wallet.balance
             withdrawn = Withdrawn(ref_id = ref_id, withdrawn_by = user, amount = int(amount), status = "SUCC" if can_withdrawn else "FAIL")
             withdrawn.save()
             if can_withdrawn: 
